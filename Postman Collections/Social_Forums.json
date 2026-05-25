@@ -1,117 +1,491 @@
 {
-	"info": {
-		"_postman_id": "202fab7c-9024-44e3-b78e-5b8c8c7ed79f",
-		"name": "Generate fake test data",
-		"description": "# 📋 Get started here\n\nPostman provides dynamic variables that use the [Faker library](https://www.npmjs.com/package/@faker-js/faker) to generate sample data, including random names, addresses, and email addresses.\n\nThis template demonstrates the use of dynamic variables to create randomized mock data. The examples in this collection utilize various data types and showcase how dynamic variables can help simulate real-world data within your API testing environment.\n\n## 🔖 How to use this template\n\n**Step 1: Send requests**\n\nSelect a request from the collection, review the request parameters and pre-request scripts, then hit \"Send\" to execute the request.\n\n**Step 2: Review the \"Body\" and \"Scripts\"** **tabs**\n\nUnderstand how dynamic variables are used to generate mock data. Dynamic variables can be used in the request URL and Body, or even as part of a pre-request or post-response script for more complex use cases (see \"Create mock blog post\" request).\n\n**Step 3: Customize (optional)**\n\nCustomize dynamic variables to better suit your specific use case. Save the changes, and execute the requests.\n\n**Step 4: Analyze responses**\n\nExamine the response body to see the generated mock data. Note that the responses will be different each time you send the request, as the dynamic variables ensure randomized data generation.\n\nEnjoy testing with diverse and dynamic data!\n\n## ℹ️ Resources\n\n[Dynamic variables](https://learning.postman.com/docs/writing-scripts/script-references/variables-list/)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Create mock user",
-			"id": "1e990c75-55e5-45c9-87c6-b87122130914",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"lastName\": \"{{$randomLastName}}\",\n    \"createdAt\": \"{{$isoTimestamp}}\",\n    \"address\": {\n        \"line1\": \"{{$randomStreetAddress}}\",\n        \"line2\": \"{{$randomCity}}\",\n        \"country\": \"{{$randomCountryCode}}\"\n    }\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "{{baseUrl}}/post",
-				"description": "This request shows an example of generating mock user data in the request body. You can use this to populate some users for testing your API or application, or to ensure that your API accepts a range of inputs within certain parameters."
-			},
-			"response": []
-		},
-		{
-			"name": "Create mock purchase",
-			"id": "b16fe8d5-f585-49c4-a7d5-9a54d8a24750",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"{{$guid}}\",\n    \"payment\": {\n        \"cardNumber\": \"{{$randomCreditCardMask}}\",\n        \"currency\": \"{{$randomCurrencyCode}}\",\n        \"amount\": {{$randomInt}},\n        \"confirmed\": \"{{$randomBoolean}}\",\n        \"confirmedAt\": \"{{$isoTimestamp}}\"\n    },\n    \"basket\": [\n        {\n            \"id\": \"{{$guid}}\",\n            \"quantity\": {{$randomInt}}\n        },\n        {\n            \"id\": \"{{$guid}}\",\n            \"quantity\": {{$randomInt}}\n        }\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "{{baseUrl}}/post",
-				"description": "This request shows an example of generating mock purchase details in the request body. It demonstrates a few finance-related dynamic variables, in addition to the ones for random ID, Integer, Boolean, and Timestamp."
-			},
-			"response": []
-		},
-		{
-			"name": "Create mock blog post",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"// Use a dynamic variable in script",
-							"// https://learning.postman.com/docs/writing-scripts/script-references/variables-list/",
-							"const loremParagraphs = pm.variables.replaceIn(\"{{$randomLoremParagraphs}}\");",
-							"",
-							"// $randomLoremParagraphs generates a string with multiple paragraphs separated by ",
-							"// newline control characters (\"\\n\"). Since we're using this in a JSON object, we ",
-							"// need to replace the newline control character with the JSON-safe string \"\\\\n\".",
-							"const blogPostContent = loremParagraphs.replace(/\\n/g, \"\\\\n\")",
-							"",
-							"// Make the result available as a variable for use in the request body",
-							"pm.variables.set('blogPostContent', blogPostContent)"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"id": "99da7715-5bef-484e-9e58-e106f1ab94b8",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"author\": \"{{$randomUserName}}\",\n    \"title\": \"{{$randomLoremWords}}\",\n    \"slug\": \"{{$randomLoremSlug}}\",\n    \"summary\": \"{{$randomLoremSentences}}\",\n    \"body\": \"{{blogPostContent}}\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "{{baseUrl}}/post",
-				"description": "This request shows an example of generating longer-form content, in this case, a blog post, and transforming mock data as part of a pre-request script.\n\nIn the body, we use dynamic variables to generate a name, a short set of words as a title, a 'slug' (URL-safe textual identifier like \"dolores-est-iusto\"), and a post summary.\n\nIn the pre-request script, we generate some paragraphs of text using `pm.variables.replaceIn`. We then transform this text to make it JSON-safe by replacing newline characters with escaped newline characters and setting the result to a variable we can reference in the body."
-			},
-			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "https://postman-echo.com"
-		}
-	]
+  "info": {
+    "_postman_id": "19c786e4-25ea-490a-a180-4a57bb1cfd01",
+    "name": "Forum Social API",
+    "description": "Complete CRUD API for Forums, Topics, Posts, and Replies.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44261635",
+    "_collection_link": "https://go.postman.co/collection/44261635-19c786e4-25ea-490a-a180-4a57bb1cfd01?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Forums",
+      "item": [
+        {
+          "name": "List all forums",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/forums",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create a new forum",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"General Discussion\",\n  \"description\": \"A place to discuss anything and everything related to our community.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/forums",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve a specific forum",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/forums/:forumId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums",
+                ":forumId"
+              ],
+              "variable": [
+                {
+                  "key": "forumId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update a specific forum",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated General Discussion\",\n  \"description\": \"Updated description.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/forums/:forumId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums",
+                ":forumId"
+              ],
+              "variable": [
+                {
+                  "key": "forumId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a specific forum",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/forums/:forumId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums",
+                ":forumId"
+              ],
+              "variable": [
+                {
+                  "key": "forumId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Topics",
+      "item": [
+        {
+          "name": "List all topics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/forums/:forumId/topics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums",
+                ":forumId",
+                "topics"
+              ],
+              "variable": [
+                {
+                  "key": "forumId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create a new topic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Welcome to the new forum!\",\n  \"author\": \"Admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/forums/:forumId/topics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forums",
+                ":forumId",
+                "topics"
+              ],
+              "variable": [
+                {
+                  "key": "forumId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a specific topic",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/topics/:topicId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics",
+                ":topicId"
+              ],
+              "variable": [
+                {
+                  "key": "topicId",
+                  "value": "101"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "List all posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/topics/:topicId/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics",
+                ":topicId",
+                "posts"
+              ],
+              "variable": [
+                {
+                  "key": "topicId",
+                  "value": "101"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create a new post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"We are so glad to have you all here. Please introduce yourselves below!\",\n  \"author\": \"Admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/topics/:topicId/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "topics",
+                ":topicId",
+                "posts"
+              ],
+              "variable": [
+                {
+                  "key": "topicId",
+                  "value": "101"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Replies",
+      "item": [
+        {
+          "name": "List all replies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/:postId/replies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                ":postId",
+                "replies"
+              ],
+              "variable": [
+                {
+                  "key": "postId",
+                  "value": "1001"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create a new reply",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Happy to be here! Looking forward to the discussions.\",\n  \"author\": \"NewUser99\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/:postId/replies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                ":postId",
+                "replies"
+              ],
+              "variable": [
+                {
+                  "key": "postId",
+                  "value": "1001"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a specific reply",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/replies/:replyId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "replies",
+                ":replyId"
+              ],
+              "variable": [
+                {
+                  "key": "replyId",
+                  "value": "10001"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "API Metadata (OPTIONS)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Endpoint /forums allows GET and POST methods\", function () {",
+              "    pm.expect(pm.response.json().endpoints[\"/forums\"].allowedMethods).to.include(\"GET\");",
+              "    pm.expect(pm.response.json().endpoints[\"/forums\"].allowedMethods).to.include(\"POST\");",
+              "});",
+              "",
+              "pm.test(\"Endpoint /forums/{forumId} allows GET, PUT, and DELETE methods\", function () {",
+              "    pm.expect(pm.response.json().endpoints[\"/forums/{forumId}\"].allowedMethods).to.include(\"GET\");",
+              "    pm.expect(pm.response.json().endpoints[\"/forums/{forumId}\"].allowedMethods).to.include(\"PUT\");",
+              "    pm.expect(pm.response.json().endpoints[\"/forums/{forumId}\"].allowedMethods).to.include(\"DELETE\");",
+              "});",
+              "",
+              "pm.test(\"Endpoint /forums/{forumId}/topics POST payload has required fields\", function () {",
+              "    pm.expect(pm.response.json().endpoints[\"/forums/{forumId}/topics\"].acceptedPayloads.POST).to.have.property(\"title\");",
+              "    pm.expect(pm.response.json().endpoints[\"/forums/{forumId}/topics\"].acceptedPayloads.POST).to.have.property(\"author\");",
+              "});",
+              "",
+              "pm.test(\"Endpoint /replies/{replyId} allows DELETE method\", function () {",
+              "    pm.expect(pm.response.json().endpoints[\"/replies/{replyId}\"].allowedMethods).to.include(\"DELETE\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "OPTIONS",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://your-mock-server-url.mock.pstmn.io"
+    }
+  ]
 }
